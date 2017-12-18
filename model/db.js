@@ -1,5 +1,5 @@
 // Bring Mongoose into the app
-var mongoose = require('mongoose');
+var mongoose = require( 'mongoose' );
 
 // Build the connection string
 var dbURI = process.env.DBURI || 'mongodb://localhost/communitybackend';
@@ -21,11 +21,12 @@ mongoose.connection.on('error', (err) => console.log('Mongoose default connectio
 mongoose.connection.on('disconnected', () => console.log('Mongoose default connection disconnected'));
 
 // If the Node process ends, close the Mongoose connection
-process.on('SIGINT', () => mongoose.connection.close)
-  .then(() => {
-      console.log('Mongoose default connection disconnected through app termination');
-      process.exit(0);
-    });
+process.on('SIGINT', function() {
+  mongoose.connection.close(function () {
+    console.log('Mongoose default connection disconnected through app termination');
+    process.exit(0);
+  });
+});
 
 // BRING IN YOUR SCHEMAS & MODELS // For example
 // require('./../model/team');
