@@ -32,4 +32,5 @@ process.on('SIGINT', function() {
 
 // BRING IN YOUR SCHEMAS & MODELS // For example
 require('./user');
+require('./post');
 // require('./../model/team');
