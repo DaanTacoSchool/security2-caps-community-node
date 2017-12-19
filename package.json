@@ -15,7 +15,6 @@
     "pug": "2.0.0-beta11",
     "serve-favicon": "~2.4.5"
   },
-
   "devDependencies": {
     "nodemon": "^1.11.0"
   }
