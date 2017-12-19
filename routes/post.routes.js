@@ -1,7 +1,8 @@
-const express = require('express');
+var express = require('express');
+var router = express.Router();
+
 const mongodb = require('../model/db');
 const posts = require('../model/post');
-const router = express.Router();
 
 router.get('/posts', function(req, res) {
   res.contentType('application/json');
@@ -11,3 +12,5 @@ router.get('/posts', function(req, res) {
     })
     .catch((error) => res.status(400).json(error));
 });
+
+module.exports = router;
