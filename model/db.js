@@ -1,3 +1,5 @@
+// http://theholmesoffice.com/mongoose-connection-best-practice/
+
 // Bring Mongoose into the app
 var mongoose = require( 'mongoose' );
 
