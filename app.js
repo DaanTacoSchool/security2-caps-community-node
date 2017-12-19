@@ -10,9 +10,10 @@ var db = require('./model/db');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
-var posts = require('./routes/post.routes');
+var post = require('./routes/post.routes');
 
 var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -30,15 +31,30 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
-app.use('/users', users);
-app.use('/posts', posts);
+app.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    next();
+});
+
+// app.use('/', index);
+// app.use('/users', users);
+app.use('/api/v1', post);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
+});
+
+app.use('*', function (req, res) {
+    res.status(400);
+    res.json({
+        'error': 'Deze URL is niet beschikbaar.'
+    });
 });
 
 // error handler
@@ -50,6 +66,11 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+app.listen(config.env.webPort, function () {
+    console.log('De server luistert op port ' + app.get('port'));
+    console.log('Zie bijvoorbeeld http://localhost:3000/api/v1/fixtures');
 });
 
 module.exports = app;

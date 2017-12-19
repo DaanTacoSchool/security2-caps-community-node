@@ -22,9 +22,8 @@ const post = new Post({
         password: 'Jerry123'
     },
     description: 'Check out my new sweater!',
-    imagePath: 'http://s7d4.scene7.com/is/image/BrooksBrothers/RS00118_GREY?$bbproductimages$'
+    imagePath: 'https://www.fjallraven.nl/media/catalog/product/cache/all/base/522x/17f82f742ffe127f42dca9de82fb58b1/F/8/F89941-220_0.jpg'
 })
-.save();
+// .save();
 
 module.exports = PostSchema;
-
