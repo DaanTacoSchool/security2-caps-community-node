@@ -4,19 +4,11 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
   name: {
-    type: String//,
-    // required: [true, 'Name is required.'],
-    // validate: {
-    //   validator: (name) => name.length > 2,
-    //   message: 'Name must be longer than 2 characters.'
-    // }
-  }//,
-  // posts: [PostSchema],
-  // likes: Number,
-  // blogPosts: [{
-  //   type: Schema.Types.ObjectId,
-  //   ref: 'blogPost'
-  // }]
+    type: String
+  },
+  password: {
+    type: String
+  }
 });
 
 // UserSchema.virtual('postCount').get(function () {
@@ -30,5 +22,10 @@ const UserSchema = new Schema({
 // });
 
 const User = mongoose.model('user', UserSchema);
+
+// const user = new User({
+//   name: 'Joe',
+//   password: 'admin'
+// }).save();
 
 module.exports = User;
