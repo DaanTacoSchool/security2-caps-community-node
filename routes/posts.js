@@ -15,7 +15,7 @@ router.get('/posts', function(req, res) {
     .catch((error) => res.status(400).json(error)); 
 });
 
-routes.get('/posts/:id', function(req, res) {
+router.get('/posts/:id', function(req, res) {
   res.contentType('application/json');
   const id = req.param('id');
   console.log(id);
@@ -26,7 +26,7 @@ routes.get('/posts/:id', function(req, res) {
       .catch((error) => res.status(400).json(error));
 });
 
-routes.post('/post', function(req, res) {
+router.post('/posts', function(req, res) {
   const postProps = req.body;
 
   Post.create(postProps)

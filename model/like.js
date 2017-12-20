@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 // const PostSchema = require('./post');
 
 const LikeSchema = new Schema({
+  userId: String,
   likes: {
     type: Number
   }
@@ -10,6 +11,6 @@ const LikeSchema = new Schema({
 
 
 
-const Like = mongoose.model('likes', LikeSchema);
+const Like = mongoose.model('like', LikeSchema);
 
 module.exports = Like;

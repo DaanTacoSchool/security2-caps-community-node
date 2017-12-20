@@ -6,6 +6,8 @@ const Like = mongoose.model('like');
 const PostSchema = new Schema({
     user: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
     like: {type: mongoose.Schema.Types.ObjectId, ref: 'like'},
+    made_by: String,
+    title: String,
     description: {
         type: String,
     },
@@ -19,8 +21,14 @@ const PostSchema = new Schema({
 const Post = mongoose.model('post', PostSchema);
 
 const user = new User({
+    _id: '5a3a1d60969f092f7c462c12',
     name: 'Jeff'
 });
+
+const like = new Like({
+    userId: 'String',
+    likes: 5,
+})
 
 var users = [user];
 const post = new Post({
