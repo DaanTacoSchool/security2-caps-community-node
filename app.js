@@ -26,18 +26,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
-app.use('/api/v1', users);
-app.use('/api/v1', posts)
-// app.use('./api/v1', likes)
-
 app.use(function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+  res.setHeader('Access-Control-Allow-Origin', '*' || 'http://localhost:4200');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
   res.setHeader('Access-Control-Allow-Credentials', true);
   next();
 });
+
+app.use('/', index);
+app.use('/api/v1', users);
+app.use('/api/v1', posts)
+// app.use('./api/v1', likes)
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
