@@ -10,7 +10,11 @@ const UserSchema = new Schema({
     //   validator: (name) => name.length > 2,
     //   message: 'Name must be longer than 2 characters.'
     // }
-  }//,
+  },
+  city: String,
+  address: String,
+  postalcode: String,
+  email: String,
   // posts: [PostSchema],
   // likes: Number,
   // blogPosts: [{
@@ -18,6 +22,16 @@ const UserSchema = new Schema({
   //   ref: 'blogPost'
   // }]
 });
+  
+  const User = mongoose.model('user', UserSchema);
+  
+  
+  const user = new User ({
+    name: 'Jeff' 
+  })
+  .save();
+  
+  
 
 // UserSchema.virtual('postCount').get(function () {
 //   return this.posts.length;
@@ -28,7 +42,5 @@ const UserSchema = new Schema({
 //   BlogPost.remove({ _id: { $in: this.blogPosts}})
 //     .then(() => next());
 // });
-
-const User = mongoose.model('user', UserSchema);
 
 module.exports = User;

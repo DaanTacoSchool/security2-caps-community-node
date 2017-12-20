@@ -9,6 +9,8 @@ var db = require('./model/db');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var posts = require('./routes/posts');
+// var likes = require('./routes/likes');
 
 var app = express();
 
@@ -24,8 +26,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*' || 'http://localhost:4200');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
+
 app.use('/', index);
-app.use('/users', users);
+app.use('/api/v1', users);
+app.use('/api/v1', posts)
+// app.use('./api/v1', likes)
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
