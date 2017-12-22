@@ -11,6 +11,7 @@ const UserSchema = new Schema({
     //   message: 'Name must be longer than 2 characters.'
     // }
   },
+  username: String,
   city: String,
   address: String,
   postalcode: String,
@@ -26,10 +27,14 @@ const UserSchema = new Schema({
   const User = mongoose.model('user', UserSchema);
   
   
-  const user = new User ({
-    name: 'Jeff' 
-  })
-  .save();
+  // const user = new User ({
+  //   name: 'Jeff',
+  //   username: 'Jeff123',
+  //   address: 'Lovensdijkstraat 63',
+  //   postalcode: '4451 BH',
+  //   email: 'jeff_123@gmail.com' 
+  // })
+  // .save();
   
   
 
