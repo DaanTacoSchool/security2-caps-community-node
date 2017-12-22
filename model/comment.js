@@ -17,4 +17,6 @@ const comment =  new Comment({
     content: 'test',
     user: '5a3a1d60969f092f7c462c12',
 });
+// .save();
+
 module.exports = Comment;
