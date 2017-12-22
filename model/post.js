@@ -49,12 +49,12 @@ const post = new Post({
     comments: [comment._id, comment._id],
     user: user._id,
     likes: [like._id]
-})
-.save().then((p) => {
-    console.log(p);
+});
+// .save().then((p) => {
+//     console.log(p);
         
-})
-    .catch((error) => console.log(error));
-console.log(post);
+// })
+//     .catch((error) => console.log(error));
+// console.log(post);
 
 module.exports = Post;
