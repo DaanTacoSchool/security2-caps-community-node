@@ -13,10 +13,10 @@ router.get('/comments/:postId', function(req, res) {
 //   console.log(id+ ' = id' );
   Post.findOne({_id: id})
       .then((post) => {
-        //   console.log('post');
-        //   console.log(post);
+          console.log('post');
+          console.log(post);
           
-          Comment.find({"_id":{ "$in": post.comments}})
+          Comment.find({"_id":{ "$in": post.comments._id}})
             .then((comments)=> {post.comments= comments;  console.log('comments::'); console.log(comments);  res.status(200).json(comments); }) // log comments -- give result ok only when in then console.log('comments::'); console.log(comments);
             .catch((error) =>{ console.log(error); res.status(400).json(error); });
         })
