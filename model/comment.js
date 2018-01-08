@@ -16,7 +16,7 @@ const comment =  new Comment({
     postId: '5a3a1d60969f092f7c462c12',
     content: 'test',
     user: '5a3a1d60969f092f7c462c12',
-});
-// .save();
+})
+.save();
 
 module.exports = Comment;
