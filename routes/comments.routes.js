@@ -5,8 +5,18 @@ const mongodb = require('../model/db');
 const Comment = require('../model/comment');
 const Post = require('../model/post');
 
-router.get('/comments/:postId', function(req, res) {
+router.get('/comments', function(req,res ){
+  res.contentType('application/json');
+  Comment.find({})
+    .then((Comment) => {
+      console.log(Comment);
+      res.status(200).json(Comment);
+    })
+    .catch((error) => res.status(400).json(error));
+})
 
+
+router.get('/comments/:postId', function(req, res) {
 
   res.contentType('application/json');
   const id = req.params.postId;
@@ -23,7 +33,5 @@ router.get('/comments/:postId', function(req, res) {
         .catch((error) =>{ console.log(error); res.status(400).json(error); 
         });
     });
-    
-        
-
+  
 module.exports = router;
