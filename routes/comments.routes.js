@@ -24,10 +24,9 @@ router.get('/comments/:postId', function (req, res) {
   const id = req.param('id');
   // console.log("the id is:");
   // console.log(id);
-  Post.findOne({ _id: id })
-    .populate('comments')
-    .then((post) => {
-      res.send({ post })
+  Comment.find({ postId: id })
+    .then((comments) => {
+      res.status(200).json(comments);
       console.log(JSON.stringify(post));
     }, (e) => {
       res.status(400).send(e);
