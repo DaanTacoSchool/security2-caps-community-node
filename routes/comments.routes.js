@@ -19,19 +19,39 @@ router.get('/comments', function(req,res ){
 router.get('/comments/:postId', function(req, res) {
 
   res.contentType('application/json');
-  const id = req.params.postId;
+  // const id = req.params.postId;
 //   console.log(id+ ' = id' );
-  Post.findOne({_id: id})
-      .then((post) => {
-          console.log('post');
-          console.log(post);
-          
-          Comment.find({"_id":{ "$in": post.comments._id}})
-            .then((comments)=> {post.comments= comments;  console.log('comments::'); console.log(comments);  res.status(200).json(comments); }) // log comments -- give result ok only when in then console.log('comments::'); console.log(comments);
-            .catch((error) =>{ console.log(error); res.status(400).json(error); });
-        })
-        .catch((error) =>{ console.log(error); res.status(400).json(error); 
-        });
-    });
+const id = req.param('id');
+// console.log("the id is:");
+// console.log(id);
+Post.findOne({_id: id})
+.populate('comments')
+    .then((post) => {
+       res.send({post})
+       console.log(JSON.stringify(post));
+      }, (e) => {
+        res.status(400).send(e);
+        console.log('Unable to get clients', e);
+      })
+          // .then((comments)=> {post.comments= comments; console.log(post)
+          //   res.status(200).json(post);
+
+         // }) // log comments -- give result ok only when in then
+          // .catch((error) => console.log(error));
+  
+      //  console.log(post);
+    // })
+    // .catch((error) => res.status(400).json(error));
+});
+
+router.post('/comments', function(req, res) {
+  const commentProps = req.body;
+
+  Comment.create(commentProps)
+    .then((comment) => {
+      res.status(200).send(Comment);
+    })
+    .catch((error) => res.status(400).json(error));
+});
   
 module.exports = router;
