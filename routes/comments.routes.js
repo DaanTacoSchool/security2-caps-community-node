@@ -22,8 +22,8 @@ router.get('/comments/:postId', function (req, res) {
   // const id = req.params.postId;
   //   console.log(id+ ' = id' );
   const id = req.param('id');
-  // console.log("the id is:");
-  // console.log(id);
+  console.log("the id is:");
+  console.log(id);
   Comment.find({ postId: id })
     .then((comments) => {
       res.status(200).json(comments);
