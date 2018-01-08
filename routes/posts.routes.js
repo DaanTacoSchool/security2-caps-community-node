@@ -71,6 +71,17 @@ router.post('/posts', function(req, res) {
       .catch((error) => res.status(400).json(error));
 });
 
+router.put('/posts/:id', function(req, res) {
+  res.contentType('application/json');
+  const id = req.param('id');
+  const postProps = req.body;
+
+  Post.findByIdAndUpdate({_id: id}, postProps)
+    .then(() => Post.findById({_id: id}))
+    .then(driver => res.send(driver))
+    .catch((error) => res.status(400).json(error))
+});
+
 
 
 
