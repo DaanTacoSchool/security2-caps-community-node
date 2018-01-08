@@ -63,10 +63,10 @@ router.post('/comments/:postId', function (req, res) {
 
 });
 
-router.post('/comments/p/:postId', function (req, res) {
+router.post('/comments/p/:id', function (req, res) {
   const commentProps = req.body[1];
   const p = req.body[0];
-  const id = req.param('id');
+  const id = req.params.id;
 
   Comment.create(commentProps)
     .then((comment) => {
