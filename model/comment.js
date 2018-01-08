@@ -13,7 +13,7 @@ const CommentSchema = new Schema({
 
 const Comment = mongoose.model('comment', CommentSchema);
 const comment =  new Comment({
-    postId: '5a3a1d60969f092f7c462c12',
+    postId: '5a3cd1183480740d58379ed4',
     content: 'test',
     user: '5a3a1d60969f092f7c462c12',
 })

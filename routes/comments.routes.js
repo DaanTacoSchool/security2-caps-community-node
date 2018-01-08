@@ -62,6 +62,26 @@ router.post('/comments/:postId', function (req, res) {
     }).catch((error) => res.status(400).json(error));
 
 });
+
+router.post('/comments/p/:postId', function (req, res) {
+  const commentProps = req.body[1];
+  const p = req.body[0];
+  const id = req.param('id');
+
+  Comment.create(commentProps)
+    .then((comment) => {
+      Post.findByIdAndUpdate({_id: id}, { _$set: p })   
+        .populate('comments')
+        .then((post) => {
+         res.status(200).json(comment);
+           console.log(JSON.stringify(post));
+        }, (e) => {
+          // catch 
+          console.log('Unable to get clients', e);
+        })
+    }).catch((error) => res.status(400).json(error));
+
+});
  
 
 
