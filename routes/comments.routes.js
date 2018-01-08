@@ -1,5 +1,3 @@
-import { Collection } from 'mongoose';
-
 var express = require('express');
 var router = express.Router();
 
@@ -61,10 +59,10 @@ router.post('/comments/:postId', function (req, res) {
           // catch 
           console.log('Unable to get clients', e);
         })
-    });
-})
-  .catch((error) => res.status(400).json(error));
+    }).catch((error) => res.status(400).json(error));
 
+});
+ 
 
 
 module.exports = router;
