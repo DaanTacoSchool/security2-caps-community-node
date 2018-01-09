@@ -5,6 +5,8 @@ const mongodb = require('../model/db');
 const Comment = require('../model/comment');
 const Post = require('../model/post');
 
+
+// Get all comments
 router.get('/comments', function (req, res) {
   res.contentType('application/json');
   Comment.find({})
@@ -16,11 +18,10 @@ router.get('/comments', function (req, res) {
 })
 
 
+// Get all comments by PostID
 router.get('/comments/:postId', function (req, res) {
 
   res.contentType('application/json');
-  // const id = req.params.postId;
-  //   console.log(id+ ' = id' );
   const id = req.param('id');
   console.log("the id is:");
   console.log(id);
@@ -32,17 +33,9 @@ router.get('/comments/:postId', function (req, res) {
       res.status(400).send(e);
       console.log('Unable to get clients', e);
     })
-  // .then((comments)=> {post.comments= comments; console.log(post)
-  //   res.status(200).json(post);
-
-  // }) // log comments -- give result ok only when in then
-  // .catch((error) => console.log(error));
-
-  //  console.log(post);
-  // })
-  // .catch((error) => res.status(400).json(error));
 });
 
+// Create a comment
 router.post('/comments/:postId', function (req, res) {
   const commentProps = req.body;
   const id = req.param('id');
@@ -62,13 +55,12 @@ router.post('/comments/:postId', function (req, res) {
 
 });
 
+// Create a post
 router.post('/comments/p/:id', function (req, res) {
   const commentProps = req.body;
   //const p = req.body.post;
   console.log('------------------------------body--------------');
   console.log(req.body);
-
-   
   //console.log(p);
 
 
@@ -89,6 +81,8 @@ router.post('/comments/p/:id', function (req, res) {
 
 });
 
+
+// Get a post by comment
 router.get('/comments/post/:id', function (req, res) {
   res.contentType('application/json');
   // comment-> find post by id
