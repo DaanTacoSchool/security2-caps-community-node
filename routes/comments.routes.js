@@ -64,12 +64,12 @@ router.post('/comments/:postId', function (req, res) {
 
 router.post('/comments/p/:id', function (req, res) {
   const commentProps = req.body.comm;
-  const p = req.body.post;
+  //const p = req.body.post;
   console.log('------------------------------body--------------');
   console.log(req.body);
 
-  
-  console.log(p);
+   
+  //console.log(p);
 
 
   console.log(commentProps);
@@ -79,7 +79,7 @@ router.post('/comments/p/:id', function (req, res) {
     user: commentProps.user,})
   t.save(commentProps)
     .then((comment) => {
-      Post.findByIdAndUpdate({_id: id}, { _$set: p })   
+      Post.findByIdAndUpdate({_id: id},{ $push:{ comments: comment}})   
       .then((post) => {
         console.log(post);
        res.status(200).json(comment);
