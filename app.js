@@ -8,8 +8,9 @@ var bodyParser = require('body-parser');
 var db = require('./model/db');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
-var posts = require('./routes/posts');
+var users = require('./routes/users.routes');
+var comments = require('./routes/comments.routes');
+var posts = require('./routes/posts.routes');
 // var likes = require('./routes/likes');
 
 var app = express();
@@ -36,7 +37,8 @@ app.use(function (req, res, next) {
 
 app.use('/', index);
 app.use('/api/v1', users);
-app.use('/api/v1', posts)
+app.use('/api/v1', comments);
+app.use('/api/v1', posts);
 // app.use('./api/v1', likes)
 
 
