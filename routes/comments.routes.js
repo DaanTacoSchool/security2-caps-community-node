@@ -63,7 +63,7 @@ router.post('/comments/:postId', function (req, res) {
 });
 
 router.post('/comments/p/:id', function (req, res) {
-  const commentProps = req.body.comm;
+  const commentProps = req.body;
   //const p = req.body.post;
   console.log('------------------------------body--------------');
   console.log(req.body);
