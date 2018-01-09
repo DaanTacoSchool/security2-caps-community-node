@@ -63,23 +63,46 @@ router.post('/comments/:postId', function (req, res) {
 });
 
 router.post('/comments/p/:id', function (req, res) {
-  const commentProps = req.body[1];
-  const p = req.body[0];
-  const id = req.params.id;
+  const commentProps = req.body.comm;
+  const p = req.body.post;
+  console.log('------------------------------body--------------');
+  console.log(req.body);
 
-  Comment.create(commentProps)
+  
+  console.log(p);
+
+
+  console.log(commentProps);
+  const id = req.params.id;
+  let t = new Comment({ postId: commentProps.postId,
+    content: commentProps.content,
+    user: commentProps.user,})
+  t.save(commentProps)
     .then((comment) => {
       Post.findByIdAndUpdate({_id: id}, { _$set: p })   
-        .populate('comments')
-        .then((post) => {
-         res.status(200).json(comment);
-           console.log(JSON.stringify(post));
-        }, (e) => {
-          // catch 
-          console.log('Unable to get clients', e);
-        })
+      .then((post) => {
+        console.log(post);
+       res.status(200).json(comment);
+       
+      }).catch((error) => console.log(error));
     }).catch((error) => res.status(400).json(error));
 
+});
+
+router.get('/comments/post/:id', function (req, res) {
+  res.contentType('application/json');
+  // comment-> find post by id
+  // then use post.comments to get all comment ids and proceed to find the comment with that id. add to resultset and return.
+  console.log(req.params.id);
+  Post.findOne({ _id: req.params.id })
+      .then((post) => {
+        console.log(post);
+          Comment.find({ "_id": { "$in": post.comments }}).then((comments)=> { res.status(200).json(comments); })
+      .catch((error)=>{console.log(error)});
+       }).catch((error) => {
+      console.log(error);
+          res.status(400).json(error);
+      });
 });
  
 

@@ -16,40 +16,41 @@ router.get('/posts', function(req, res) {
     .catch((error) => res.status(400).json(error)); 
 });
 
-// router.get('/posts/:id', function(req, res) {
-//   res.contentType('application/json');
-//   const id = req.param('id');
-//   console.log("the id is:");
-//   console.log(id);
-//   Post.findOne({_id: id})
-//       .then((post) => {
-//           Comment.find({"_id":{ "$in": post.comments}})
-//             .then((comments)=> {post.comments= comments; console.log(post)
-//               res.status(200).json(post);
-
-//             }) // log comments -- give result ok only when in then
-//             .catch((error) => console.log(error));
-    
-//         //  console.log(post);
-//       })
-//       .catch((error) => res.status(400).json(error));
-// });
-
-
 router.get('/posts/:id', function(req, res) {
   res.contentType('application/json');
   const id = req.param('id');
-  // console.log("the id is:");
-  // console.log(id);
+  console.log("the id is:");
+  console.log(id);
   Post.findOne({_id: id})
-  .populate('comments')
       .then((post) => {
-         res.send({post})
-         console.log(JSON.stringify(post));
-        }, (e) => {
-          res.status(400).send(e);
-          console.log('Unable to get clients', e);
-        })
+          Comment.find({"_id":{ "$in": post.comments}})
+            .then((comments)=> {post.comments= comments; console.log(post)
+              res.status(200).json(post);
+
+            }) // log comments -- give result ok only when in then
+            .catch((error) => console.log(error));
+    
+        //  console.log(post);
+      })
+      .catch((error) => res.status(400).json(error));
+});
+
+
+// router.get('/posts/:id', function(req, res) {
+//   res.contentType('application/json');
+//   const id = req.param('id');
+//   // console.log("the id is:");
+//   // console.log(id);
+//   Post.findOne({_id: id})
+//   .populate('comments')
+//       .then((post) => {
+//          res.send({post})
+//          console.log(JSON.stringify(post));
+//         }, (e) => {
+//           res.status(400).send(e);
+//           console.log('Unable to get clients', e);
+//         })
+
             // .then((comments)=> {post.comments= comments; console.log(post)
             //   res.status(200).json(post);
 
@@ -59,7 +60,7 @@ router.get('/posts/:id', function(req, res) {
         //  console.log(post);
       // })
       // .catch((error) => res.status(400).json(error));
-});
+//});
 
 router.post('/posts', function(req, res) {
   const postProps = req.body;
