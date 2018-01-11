@@ -3,11 +3,11 @@ const config = require('../config/config.json');
 const moment = require('moment');
 const User = require('../model/user');
 
-function encodeToken(username) {
+function encodeToken(user) {
     let payload = {
         exp: moment().add(2, 'days').unix(),
         iat: moment().unix(),
-        sub: username
+        sub: user.guid
     };
 
     return jwt.encode(payload, config.secretKey);
@@ -22,15 +22,10 @@ function decodeToken(token, callback) {
 
         if (now > payload.exp) {
             console.log('Token expired');
+            callback(new Error('Token expired'), null);
         }
 
-        User.findOne({ name: payload.sub }, (err, user) => {
-            if (err) callback(err, null);
-
-            if(!user) callback(new Error('User not found'), null);
-
-            return callback(null, payload);
-        });
+        return callback(null, payload);
     } catch (err) {
         callback(err, null);
     }
