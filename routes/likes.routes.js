@@ -48,3 +48,5 @@ router.delete('/likes/:id', (req, res) => {
         res.status(200).json({message: 'Like removed'});
     });
 });
+
+module.exports = router;

@@ -11,7 +11,7 @@ var index = require('./routes/index');
 var users = require('./routes/users.routes');
 var comments = require('./routes/comments.routes');
 var posts = require('./routes/posts.routes');
-var likes = require('./routes/likes');
+var likes = require('./routes/likes.routes');
 
 var app = express();
 

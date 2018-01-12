@@ -13,7 +13,7 @@ const PostSchema = new Schema({
     description: {
         type: String,
     },
-    imagePath: {
+    image_path: {
         type: String,
     }
     // Like: LikeSchema,
@@ -45,7 +45,7 @@ const post = new Post({
     title: 'Caps test',
     description: 'test!',
     made_by: 'meer',
-    imagePath: 'https://www.fjallraven.nl/media/catalog/product/cache/all/base/522x/17f82f742ffe127f42dca9de82fb58b1/F/8/F89941-220_0.jpg',
+    image_path: 'https://www.fjallraven.nl/media/catalog/product/cache/all/base/522x/17f82f742ffe127f42dca9de82fb58b1/F/8/F89941-220_0.jpg',
     comments: [comment._id, comment._id],
     user: user._id,
     likes: [like._id]
