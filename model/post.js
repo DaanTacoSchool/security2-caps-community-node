@@ -13,7 +13,7 @@ const PostSchema = new Schema({
     description: {
         type: String,
     },
-    imagePath: {
+    image_path: {
         type: String,
     }
     // Like: LikeSchema,
