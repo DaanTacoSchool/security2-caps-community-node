@@ -97,7 +97,6 @@ function LoginASPNETBackend(email, password, callback) {
     let post_req = http.request(post_options, function(res) {
         res.setEncoding('utf8');
         res.on('data', function (chunk) {
-            console.dir('Response: ' + chunk);
             result += chunk;
         });
         res.on('end', function () {
