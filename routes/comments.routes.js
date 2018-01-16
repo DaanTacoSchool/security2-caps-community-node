@@ -1,5 +1,6 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const {GetUserASPNETBackend} = require('../services/aspnet-api.service');
 
 const mongodb = require('../model/db');
 const Comment = require('../model/comment');
@@ -38,51 +39,63 @@ router.get('/comments/:postId', function (req, res) {
 // Create a comment
 router.post('/comments/:postId', function (req, res) {
   const commentProps = req.body;
-  commentProps.user = req.user.sub;
-
   const id = req.param('id');
 
-  Comment.create(commentProps)
-    .then((comment) => {
-      Post.findByIdAndUpdate({_id: id, user: commentProps.user}, {$push: {comments: comment}})
-        .populate('comments')
-        .then((post) => {
-         res.status(200).json(comment);
-           console.log(JSON.stringify(post));
-        }, (e) => {
-          // catch 
-          console.log('Unable to get clients', e);
-        })
-    }).catch((error) => res.status(400).json(error));
+  GetUserASPNETBackend(req.user.sub(), function (error, user) {
+      if(error) {
+          res.status(400).json(error)
+      } else {
+          commentProps.user = user;
+          Comment.create(commentProps)
+              .then((comment) => {
+                  Post.findByIdAndUpdate({_id: id}, {$push: {comments: comment}})
+                      .populate('comments')
+                      .then((post) => {
+                          res.status(200).json(comment);
+                          console.log(JSON.stringify(post));
+                      }, (e) => {
+                          // catch
+                          console.log('Unable to get clients', e);
+                      })
+              }).catch((error) => res.status(400).json(error));
+      }
+  });
 
 });
 
 // Create a post
 router.post('/comments/p/:id', function (req, res) {
   const commentProps = req.body;
-  commentProps.user = req.user.sub;
 
-  //const p = req.body.post;
-  console.log('------------------------------body--------------');
-  console.log(req.body);
-  //console.log(p);
+  GetUserASPNETBackend(req.user.sub(), function (error, user) {
+     if(error){
+         res.status(400).json(error)
+     } else {
+         commentProps.user = user;
+
+         //const p = req.body.post;
+         console.log('------------------------------body--------------');
+         console.log(req.body);
+         //console.log(p);
 
 
-  console.log(commentProps);
-  const id = req.params.id;
-  let t = new Comment({ postId: commentProps.postId,
-    content: commentProps.content,
-    user: commentProps.user,})
-  t.save(commentProps)
-    .then((comment) => {
-      Post.findByIdAndUpdate({_id: id},{ $push:{ comments: comment}})   
-      .then((post) => {
-        console.log(post);
-       res.status(200).json(comment);
-       
-      }).catch((error) => console.log(error));
-    }).catch((error) => res.status(400).json(error));
+         console.log(commentProps);
+         const id = req.params.id;
+         let t = new Comment({ postId: commentProps.postId,
+             content: commentProps.content,
+             user: commentProps.user,});
+         t.save(commentProps)
+             .then((comment) => {
+                 Post.findByIdAndUpdate({_id: id},{ $push:{ comments: comment}})
+                     .then((post) => {
+                         console.log(post);
+                         res.status(200).json(comment);
 
+                     }).catch((error) => console.log(error));
+             }).catch((error) => res.status(400).json(error));
+
+     }
+  });
 });
 
 

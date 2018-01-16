@@ -1,7 +1,7 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const {GetUserASPNETBackend} = require('../services/aspnet-api.service');
 
-const mongodb = require('../model/db');
 const Post = require('../model/post');
 const Comment = require('../model/comment');
 
@@ -41,31 +41,54 @@ router.get('/posts/:id', function(req, res) {
 // Create a post
 router.post('/posts', function(req, res) {
   const postProps = req.body;
-  postProps.user = req.user.sub;
 
   delete postProps._id;
   delete postProps.likes;
   delete postProps.comments;
 
-  Post.create(postProps)
-      .then((post) => {
-        res.status(200).json(post);
-      })
-      .catch((error) => res.status(400).json(error));
+  GetUserASPNETBackend(req.user.sub, function(error, user) {
+    if(error) {
+        res.status(400).json(error)
+    } else {
+        postProps.user = user;
+
+        Post.create(postProps)
+            .then((post) => {
+                res.status(200).json(post);
+            })
+            .catch((error) => res.status(400).json(error));
+    }
+  });
+
+
 });
 
 
 // Update a Post by ID
 router.put('/posts/:id', function(req, res) {
-  res.contentType('application/json');
-  const id = req.param('id');
+  const id = req.params.id;
   const postProps = req.body;
-  postProps.user = req.user.sub;
 
-  Post.findByIdAndUpdate({_id: id}, postProps)
-    .then(() => Post.findById({_id: id}))
-    .then(driver => res.send(driver))
-    .catch((error) => res.status(400).json(error))
+  GetUserASPNETBackend(req.user.sub, function(error, user) {
+      if(error) {
+          res.status(400).json(error)
+      } else {
+          const update = {
+              title: postProps.title,
+              description: postProps.title,
+              image_path: postProps.image_path,
+              user: user
+          };
+
+          Post.findByIdAndUpdate({_id: id, 'user.guid': req.user.sub}, {$set: update}, {new: true})
+              .then((post) => {
+                  res.status(200).json(post);
+              })
+              .catch((error) => res.status(400).json(error));
+      }
+  });
+
+
 });
 
 

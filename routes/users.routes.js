@@ -1,6 +1,6 @@
-var express = require('express');
-var router = express.Router();
-var User = require('../model/user')
+const express = require('express');
+const router = express.Router();
+const {GetUserASPNETBackend} = require('../services/aspnet-api.service');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -9,13 +9,26 @@ router.get('/', function(req, res, next) {
 
 router.get('/users/:id', function(req, res) {
   res.contentType('application/json');
-  const id = req.param('id');
-  console.log(id);
-  User.findOne({_id: id})
-      .then((User) => {
-          res.status(200).json(User);
-      })
-      .catch((error) => res.status(400).json(error));
+  const id = req.params.id;
+
+  GetUserASPNETBackend(id, function(error, result) {
+      if(error) {
+          res.status(400).json({error: 'Could not load user'});
+      } else {
+          let user = {
+              id: result.id,
+              guid: result.guid,
+              fullName: result.fullName,
+              vendorId: result.vendorId,
+              email: result.email,
+              phoneNumber: result.phoneNumber,
+              password: result.password,
+              roleIds: result.roleIds
+          };
+
+          res.json(user);
+      }
+  });
 });
 
 module.exports = router;
