@@ -13,7 +13,7 @@ router.post('/auth/login', function(req, res) {
             if(error) {
                 res.status(400).json({error: 'Login not correct'});
             } else {
-                let user: User = {
+                let user = {
                     guid: result.guid,
                     fullName: result.fullName,
                     email: result.email,
@@ -42,7 +42,7 @@ router.post('/auth/register', function(req, res) {
                 if(error) {
                     res.status(400).json({error: 'Registration not correct'});
                 } else {
-                    let user: User = {
+                    let user = {
                         guid: response.guid,
                         fullName: response.fullName,
                         email: response.email,

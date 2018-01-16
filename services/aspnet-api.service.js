@@ -132,7 +132,7 @@ function GetUserASPNETBackend(guid, callback) {
                 let jsonResult = JSON.parse(result);
 
                 if (jsonResult.Error === undefined && jsonResult.id !== undefined) {
-                    const user: User = {
+                    const user = {
                         guid: jsonResult.guid,
                         fullName: jsonResult.fullName,
                         email: jsonResult.email
