@@ -41,6 +41,8 @@ router.get('/posts/:id', function(req, res) {
 // Create a post
 router.post('/posts', function(req, res) {
   const postProps = req.body;
+    console.dir(req);
+    console.dir(req.user);
 
   Post.create(postProps)
       .then((post) => {

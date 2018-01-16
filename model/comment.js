@@ -4,9 +4,9 @@ const User = require('./user');
 
 
 const CommentSchema = new Schema({
-  postId: String,
+  postId: {type: mongoose.Schema.Types.ObjectId, ref: 'post'},
   content: String,
-  user: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
+  user: String,
 });
 
 
