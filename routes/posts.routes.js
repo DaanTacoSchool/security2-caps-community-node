@@ -5,18 +5,18 @@ const jwt = require('express-jwt');
 const {GetUserASPNETBackendv2} = require('../services/aspnet-api.service');
 
 const Post = require('../model/post');
-const Comment = require('../model/comment');
 
 // Get all Posts
 router.get('/posts', function(req, res) {
-  res.contentType('application/json');
-  Post.find({})
-    .then((Post) => {
-        console.log(Post);
-      res.status(200).json(Post);
-    })
-
-    .catch((error) => res.status(400).json(error)); 
+    res.contentType('application/json');
+    Post.find({})
+        .populate('comments')
+        .then((post) => {
+            res.status(200).json(post);
+        })
+        .catch((error) => {
+            res.status(400).json(error)
+        });
 });
 
 // Get a post by ID
@@ -26,24 +26,24 @@ router.get('/posts/:id', jwt({
     }),
     function(req, res) {
         res.contentType('application/json');
+
         const id = req.params.id;
-        console.log("the id is:");
-        console.log(id);
+
         Post.findOne({_id: id})
+          .populate('comments')
           .then((post) => {
-              Comment.find({"_id":{ "$in": post.comments}})
-                .then((comments)=> {post.comments= comments; console.log(post)
-                  res.status(200).json(post);
-
-                }) // log comments -- give result ok only when in then
-                .catch((error) => console.log(error));
-
-            //  console.log(post);
+              if (req.user !== undefined && post.user.guid === req.user.sub) {
+                  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+              } else {
+                  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+              }
+              res.status(200).json(post);
           })
-          .catch((error) => res.status(400).json(error));
+          .catch((error) => {
+              res.status(400).json(error)
+          });
     }
 );
-
 
 // Create a post
 router.post('/posts', function(req, res) {
@@ -81,6 +81,7 @@ router.put('/posts/:id', function(req, res) {
         };
 
         Post.findByIdAndUpdate({_id: id, 'user.guid': req.user.sub}, {$set: update}, {new: true})
+            .populate('comment')
             .then((post) => {
                 res.status(200).json(post);
             })
@@ -89,10 +90,21 @@ router.put('/posts/:id', function(req, res) {
         res.status(400).json({error: 'Could not load user'});
     });
 
-
 });
 
+// Update a Post by ID
+router.delete('/posts/:id', function(req, res) {
+    const id = req.params.id;
 
+    Post.findOneAndRemove({_id: id, 'user.guid': req.user.sub})
+        .then((post) => {
+            res.status(200).json(post);
+        })
+        .catch((error) => {
+            res.status(400).json({error: 'Could not delete post'})
+        });
+
+});
 
 
 
