@@ -32,7 +32,7 @@ router.get('/likes/u/:userId', (req, res) => {
 router.post('/likes', (req, res) => {
     let l = new Like({
         user: req.body.user,
-        post: req.body.post
+        postId: req.body.postId
     });
 
     l.save().then((err, like) => {
