@@ -41,7 +41,7 @@ router.post('/comments/:postId', function (req, res) {
     const commentProps = req.body;
     const id = req.param('id');
 
-    GetUserASPNETBackendv2(req.user.sub()).then((user) => {
+    GetUserASPNETBackendv2(req.user.sub).then((user) => {
       commentProps.user = user;
       Comment.create(commentProps)
           .then((comment) => {
@@ -65,7 +65,7 @@ router.post('/comments/:postId', function (req, res) {
 router.post('/comments/p/:id', function (req, res) {
   const commentProps = req.body;
 
-  GetUserASPNETBackendv2(req.user.sub())
+  GetUserASPNETBackendv2(req.user.sub)
       .then((user)  => {
          commentProps.user = user;
 
@@ -91,7 +91,7 @@ router.post('/comments/p/:id', function (req, res) {
              }).catch((error) => res.status(400).json(error));
 
   }).catch((error) => {
-      res.status(400).json({error: 'Could not load user'})
+      res.status(400).json(error);
   });
 });
 

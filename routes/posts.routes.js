@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const config = require('../config/config.json');
+const jwt = require('express-jwt');
 const {GetUserASPNETBackendv2} = require('../services/aspnet-api.service');
 
 const Post = require('../model/post');
@@ -18,24 +20,29 @@ router.get('/posts', function(req, res) {
 });
 
 // Get a post by ID
-router.get('/posts/:id', function(req, res) {
-  res.contentType('application/json');
-  const id = req.params.id;
-  console.log("the id is:");
-  console.log(id);
-  Post.findOne({_id: id})
-      .then((post) => {
-          Comment.find({"_id":{ "$in": post.comments}})
-            .then((comments)=> {post.comments= comments; console.log(post)
-              res.status(200).json(post);
+router.get('/posts/:id', jwt({
+        secret: config.secretKey,
+        credentialsRequired: false
+    }),
+    function(req, res) {
+        res.contentType('application/json');
+        const id = req.params.id;
+        console.log("the id is:");
+        console.log(id);
+        Post.findOne({_id: id})
+          .then((post) => {
+              Comment.find({"_id":{ "$in": post.comments}})
+                .then((comments)=> {post.comments= comments; console.log(post)
+                  res.status(200).json(post);
 
-            }) // log comments -- give result ok only when in then
-            .catch((error) => console.log(error));
-    
-        //  console.log(post);
-      })
-      .catch((error) => res.status(400).json(error));
-});
+                }) // log comments -- give result ok only when in then
+                .catch((error) => console.log(error));
+
+            //  console.log(post);
+          })
+          .catch((error) => res.status(400).json(error));
+    }
+);
 
 
 // Create a post
