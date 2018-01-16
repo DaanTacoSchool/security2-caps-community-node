@@ -15,18 +15,7 @@ router.get('/users/:id', function(req, res) {
       if(error) {
           res.status(400).json({error: 'Could not load user'});
       } else {
-          let user = {
-              id: result.id,
-              guid: result.guid,
-              fullName: result.fullName,
-              vendorId: result.vendorId,
-              email: result.email,
-              phoneNumber: result.phoneNumber,
-              password: result.password,
-              roleIds: result.roleIds
-          };
-
-          res.json(user);
+          res.json(result);
       }
   });
 });
