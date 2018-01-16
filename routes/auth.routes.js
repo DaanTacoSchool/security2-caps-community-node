@@ -100,11 +100,15 @@ function LoginASPNETBackend(email, password, callback) {
             result += chunk;
         });
         res.on('end', function () {
-            let jsonResult = JSON.parse(result);
+            try {
+                let jsonResult = JSON.parse(result);
 
-            if(jsonResult.Error === undefined && jsonResult.id !== undefined) {
-                callback(null, jsonResult);
-            } else {
+                if (jsonResult.Error === undefined && jsonResult.id !== undefined) {
+                    callback(null, jsonResult);
+                } else {
+                    callback({error: 'Login not correct'});
+                }
+            } catch (error) {
                 callback({error: 'Login not correct'});
             }
 

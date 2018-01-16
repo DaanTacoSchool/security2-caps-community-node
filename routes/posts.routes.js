@@ -20,7 +20,7 @@ router.get('/posts', function(req, res) {
 // Get a post by ID
 router.get('/posts/:id', function(req, res) {
   res.contentType('application/json');
-  const id = req.param('id');
+  const id = req.params.id;
   console.log("the id is:");
   console.log(id);
   Post.findOne({_id: id})
@@ -49,7 +49,7 @@ router.post('/posts', function(req, res) {
 
   Post.create(postProps)
       .then((post) => {
-        res.status(200).send(post);
+        res.status(200).json(post);
       })
       .catch((error) => res.status(400).json(error));
 });
