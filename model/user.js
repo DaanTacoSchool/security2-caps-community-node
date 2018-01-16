@@ -23,20 +23,20 @@ const UserSchema = new Schema({
   //   ref: 'blogPost'
   // }]
 });
-  
+
   const User = mongoose.model('user', UserSchema);
-  
-  
+
+
   // const user = new User ({
   //   name: 'Jeff',
   //   username: 'Jeff123',
   //   address: 'Lovensdijkstraat 63',
   //   postalcode: '4451 BH',
-  //   email: 'jeff_123@gmail.com' 
+  //   email: 'jeff_123@gmail.com'
   // })
   // .save();
-  
-  
+
+
 
 // UserSchema.virtual('postCount').get(function () {
 //   return this.posts.length;
