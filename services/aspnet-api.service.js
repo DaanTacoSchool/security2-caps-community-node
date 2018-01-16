@@ -1,8 +1,12 @@
 const User = require('../model/user');
 const http = require('http');
+const rp = require('request-promise');
 
 const api_version = process.env.CAPS_API_VERSION || 'v1';
 
+/**
+ * @deprecated use LoginASPNETBackend v2
+ */
 function LoginASPNETBackend(email, password, callback) {
     // Build the post string from an object
     let post_data = JSON.stringify({
@@ -53,6 +57,27 @@ function LoginASPNETBackend(email, password, callback) {
     post_req.end();
 }
 
+function LoginASPNETBackendv2(email, password) {
+
+    // Build the post string from an object
+    let post_data = {
+        'email' : email,
+        'password' : password
+    };
+
+    let options = {
+        uri: (process.env.CAPS_ASPWEBSITE || 'https://capsdevelop.azurewebsites.net')+'/api/'+api_version+'/users/login',
+        method: 'POST',
+        body: post_data,
+        json: true // Automatically parses the JSON string in the response
+    };
+
+    return rp(options);
+}
+
+/**
+ * @deprecated use RegisterASPNETBackend v2
+ */
 function RegisterASPNETBackend(user, callback) {
     // Build the post string from an object
     let post_data = JSON.stringify({
@@ -104,6 +129,29 @@ function RegisterASPNETBackend(user, callback) {
     post_req.end();
 }
 
+function RegisterASPNETBackendv2(user) {
+
+    // Build the post string from an object
+    let post_data = JSON.stringify({
+        Email: user.email,
+        FullName: user.fullName,
+        PhoneNumber: user.phoneNumber,
+        Password: user.password
+    });
+
+    let options = {
+        uri: (process.env.CAPS_ASPWEBSITE || 'https://capsdevelop.azurewebsites.net')+'/api/'+api_version+'/users/register',
+        method: 'POST',
+        body: post_data,
+        json: true // Automatically parses the JSON string in the response
+    };
+
+    return rp(options);
+}
+
+/**
+ * @deprecated use GetUserASPNETBackend v2
+ */
 function GetUserASPNETBackend(guid, callback) {
 
     let api_version = process.env.CAPS_API_VERSION || 'v1';
@@ -153,8 +201,22 @@ function GetUserASPNETBackend(guid, callback) {
     post_req.end();
 }
 
+function GetUserASPNETBackendv2(guid) {
+
+    let options = {
+        uri: (process.env.CAPS_ASPWEBSITE || 'https://capsdevelop.azurewebsites.net')+`/api/${api_version}/users/${guid}`,
+        method: 'GET',
+        json: true // Automatically parses the JSON string in the response
+    };
+
+    return rp(options);
+}
+
 module.exports = {
     RegisterASPNETBackend,
+    RegisterASPNETBackendv2,
     LoginASPNETBackend,
-    GetUserASPNETBackend
+    LoginASPNETBackendv2,
+    GetUserASPNETBackend,
+    GetUserASPNETBackendv2
 };

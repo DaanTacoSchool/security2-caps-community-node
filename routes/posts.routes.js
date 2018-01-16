@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {GetUserASPNETBackend} = require('../services/aspnet-api.service');
+const {GetUserASPNETBackendv2} = require('../services/aspnet-api.service');
 
 const Post = require('../model/post');
 const Comment = require('../model/comment');
@@ -40,16 +40,13 @@ router.get('/posts/:id', function(req, res) {
 
 // Create a post
 router.post('/posts', function(req, res) {
-  const postProps = req.body;
+    const postProps = req.body;
 
-  delete postProps._id;
-  delete postProps.likes;
-  delete postProps.comments;
+    delete postProps._id;
+    delete postProps.likes;
+    delete postProps.comments;
 
-  GetUserASPNETBackend(req.user.sub, function(error, user) {
-    if(error) {
-        res.status(400).json(error)
-    } else {
+    GetUserASPNETBackendv2(req.user.sub).then((user) => {
         postProps.user = user;
 
         Post.create(postProps)
@@ -57,10 +54,9 @@ router.post('/posts', function(req, res) {
                 res.status(200).json(post);
             })
             .catch((error) => res.status(400).json(error));
-    }
-  });
-
-
+    }).catch((error) => {
+        res.status(400).json({error: 'Could not load user'});
+    });
 });
 
 
@@ -69,24 +65,22 @@ router.put('/posts/:id', function(req, res) {
   const id = req.params.id;
   const postProps = req.body;
 
-  GetUserASPNETBackend(req.user.sub, function(error, user) {
-      if(error) {
-          res.status(400).json(error)
-      } else {
-          const update = {
-              title: postProps.title,
-              description: postProps.title,
-              image_path: postProps.image_path,
-              user: user
-          };
+    GetUserASPNETBackendv2(req.user.sub).then((user) => {
+        const update = {
+            title: postProps.title,
+            description: postProps.title,
+            image_path: postProps.image_path,
+            user: user
+        };
 
-          Post.findByIdAndUpdate({_id: id, 'user.guid': req.user.sub}, {$set: update}, {new: true})
-              .then((post) => {
-                  res.status(200).json(post);
-              })
-              .catch((error) => res.status(400).json(error));
-      }
-  });
+        Post.findByIdAndUpdate({_id: id, 'user.guid': req.user.sub}, {$set: update}, {new: true})
+            .then((post) => {
+                res.status(200).json(post);
+            })
+            .catch((error) => res.status(400).json(error));
+    }).catch((error) => {
+        res.status(400).json({error: 'Could not load user'});
+    });
 
 
 });

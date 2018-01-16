@@ -1,7 +1,6 @@
 const jwt = require('jwt-simple');
 const config = require('../config/config.json');
 const moment = require('moment');
-const User = require('../model/user');
 
 function encodeToken(user) {
     let payload = {
