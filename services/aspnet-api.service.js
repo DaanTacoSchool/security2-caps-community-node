@@ -104,7 +104,7 @@ function RegisterASPNETBackend(user, callback) {
     post_req.end();
 }
 
-function GetUserASPNETBackend(guid, callback): User {
+function GetUserASPNETBackend(guid, callback) {
 
     let api_version = process.env.CAPS_API_VERSION || 'v1';
 
