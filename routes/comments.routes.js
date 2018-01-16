@@ -38,11 +38,13 @@ router.get('/comments/:postId', function (req, res) {
 // Create a comment
 router.post('/comments/:postId', function (req, res) {
   const commentProps = req.body;
+  commentProps.user = req.user.sub;
+
   const id = req.param('id');
 
   Comment.create(commentProps)
     .then((comment) => {
-      Post.findByIdAndUpdate({_id: id}, {$push: {comments: comment}})
+      Post.findByIdAndUpdate({_id: id, user: commentProps.user}, {$push: {comments: comment}})
         .populate('comments')
         .then((post) => {
          res.status(200).json(comment);
@@ -58,6 +60,8 @@ router.post('/comments/:postId', function (req, res) {
 // Create a post
 router.post('/comments/p/:id', function (req, res) {
   const commentProps = req.body;
+  commentProps.user = req.user.sub;
+
   //const p = req.body.post;
   console.log('------------------------------body--------------');
   console.log(req.body);

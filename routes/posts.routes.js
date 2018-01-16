@@ -41,12 +41,15 @@ router.get('/posts/:id', function(req, res) {
 // Create a post
 router.post('/posts', function(req, res) {
   const postProps = req.body;
-    console.dir(req);
-    console.dir(req.user);
+  postProps.user = req.user.sub;
+
+  delete postProps._id;
+  delete postProps.likes;
+  delete postProps.comments;
 
   Post.create(postProps)
       .then((post) => {
-      res.status(200).send(Post);
+        res.status(200).send(post);
       })
       .catch((error) => res.status(400).json(error));
 });
@@ -57,6 +60,7 @@ router.put('/posts/:id', function(req, res) {
   res.contentType('application/json');
   const id = req.param('id');
   const postProps = req.body;
+  postProps.user = req.user.sub;
 
   Post.findByIdAndUpdate({_id: id}, postProps)
     .then(() => Post.findById({_id: id}))
