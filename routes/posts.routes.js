@@ -41,8 +41,7 @@ router.get('/posts/:id', function(req, res) {
 // Create a post
 router.post('/posts', function(req, res) {
   const postProps = req.body;
-    console.dir(req);
-    console.dir(req.user);
+  postProps.user = req.user.sub;
 
   Post.create(postProps)
       .then((post) => {
@@ -57,6 +56,7 @@ router.put('/posts/:id', function(req, res) {
   res.contentType('application/json');
   const id = req.param('id');
   const postProps = req.body;
+  postProps.user = req.user.sub;
 
   Post.findByIdAndUpdate({_id: id}, postProps)
     .then(() => Post.findById({_id: id}))
