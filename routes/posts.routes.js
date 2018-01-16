@@ -43,9 +43,13 @@ router.post('/posts', function(req, res) {
   const postProps = req.body;
   postProps.user = req.user.sub;
 
+  delete postProps._id;
+  delete postProps.likes;
+  delete postProps.comments;
+
   Post.create(postProps)
       .then((post) => {
-      res.status(200).send(Post);
+        res.status(200).send(post);
       })
       .catch((error) => res.status(400).json(error));
 });

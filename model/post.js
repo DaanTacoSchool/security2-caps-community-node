@@ -8,7 +8,6 @@ const PostSchema = new Schema({
     user: String,
     likes: [{type: mongoose.Schema.Types.ObjectId, ref: 'like'}],
     comments: [{type: mongoose.Schema.Types.ObjectId, ref: 'comment'}],
-    made_by: String,
     title: String,
     description: {
         type: String,
@@ -44,7 +43,6 @@ var lke = 'test';
 const post = new Post({
     title: 'Caps test',
     description: 'test!',
-    made_by: 'meer',
     imagePath: 'https://www.fjallraven.nl/media/catalog/product/cache/all/base/522x/17f82f742ffe127f42dca9de82fb58b1/F/8/F89941-220_0.jpg',
     comments: [comment._id, comment._id],
     user: '',
