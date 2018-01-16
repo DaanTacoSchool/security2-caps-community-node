@@ -68,7 +68,7 @@ router.put('/posts/:id', function(req, res) {
     GetUserASPNETBackendv2(req.user.sub).then((user) => {
         const update = {
             title: postProps.title,
-            description: postProps.title,
+            description: postProps.description,
             image_path: postProps.image_path,
             user: user
         };
