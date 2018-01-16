@@ -5,6 +5,9 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+const config = require('./config/config.json');
+const jwt = require('express-jwt');
+
 var db = require('./model/db');
 
 var index = require('./routes/index');
@@ -27,6 +30,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(jwt({ secret: config.secretKey}).unless({path: [
+    /\/api\/v1\/users/i,
+    /\/api\/v1\/comments/i,
+    {url: /\/api\/v1\/posts/i, methods: ['GET', 'OPTIONS']},
+    /\/api\/v1\/auth/i,
+]}));
 
 app.use(function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*' || 'http://localhost:4200');
