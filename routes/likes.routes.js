@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const {GetUserASPNETBackendv2} = require('../services/aspnet-api.service');
 
 const Like = require('../model/like');
 
@@ -7,7 +8,7 @@ const Like = require('../model/like');
 router.get('/likes/:postId', (req, res) => {
     let postId = req.params.postId;
 
-    Like.find({ post: postId}).then((err, likes) => {
+    Like.find({ postId: postId}).then((err, likes) => {
         if (err) return res.json(err);
 
         res.status(200).json(likes);
@@ -16,29 +17,41 @@ router.get('/likes/:postId', (req, res) => {
 });
 
 // Get likes of a user
-router.get('/likes/u/:userId', (req, res) => {
-    let userId = req.params.userId;
-    
-    Like.find({ user: userId}).then((err, likes) => {
-        if (err) return res.json(err);
-
-        res.status(200).json(likes);
-        console.log('fetched likes from user with id ' + userId);
-    });
+router.get('/likes/u', (req, res) => {
+    console.log(req.user.sub);
+    // GetUserASPNETBackendv2(req.user.sub)
+    //     .then((u) => {
+    //         console.log(u);
+    //         Like.find({ user: u})
+    //             .then((likes) => {
+    //                 console.log(likes);
+    //                 res.status(200).json(likes);
+    //             }).catch((error) => {
+    //                 res.status(400).json(error);
+    //             });
+    //     });
+    console.log('hello');
 });
 
 
 // Create a like
 router.post('/likes', (req, res) => {
-    let l = new Like({
-        user: req.body.user,
-        postId: req.body.postId
-    });
+    let postId = req.body.postId;
 
-    l.save().then((err, like) => {
-        if (err) return res.json(err);
-        res.status(201).json(like);
-    });
+    console.log(postId);
+
+    GetUserASPNETBackendv2(req.user.sub)
+        .then((user) => {
+            let l = new Like({
+                user: user,
+                postId: postId
+            });
+            l.save().then((like) => {
+                res.status(200).json(like);
+            }).catch((error) => {
+                res.status(400).json(error);
+            })
+        });
 });
 
 // Delete (-un-like?) a like

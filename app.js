@@ -14,12 +14,9 @@ var index = require('./routes/index');
 var users = require('./routes/users.routes');
 var comments = require('./routes/comments.routes');
 var posts = require('./routes/posts.routes');
-<<<<<<< HEAD
 var likes = require('./routes/likes.routes');
-=======
 var auth = require('./routes/auth.routes');
 // var likes = require('./routes/likes');
->>>>>>> feature/authorization
 
 var app = express();
 
@@ -54,12 +51,9 @@ app.use('/', index);
 app.use('/api/v1', users);
 app.use('/api/v1', comments);
 app.use('/api/v1', posts);
-<<<<<<< HEAD
 app.use('/api/v1', likes);
-=======
 app.use('/api/v1', auth);
 // app.use('./api/v1', likes)
->>>>>>> feature/authorization
 
 
 // catch 404 and forward to error handler
