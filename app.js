@@ -37,6 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(jwt({ secret: config.secretKey}).unless({path: [
     {url: /\/api\/v1\/users/i, methods: ['GET', 'OPTIONS']},
     {url: /\/api\/v1\/comments/i, methods: ['GET', 'OPTIONS']},
+    {url: /\/api\/v1\/likes/i, methods: ['GET', 'OPTIONS']},
     {url: /\/api\/v1\/posts/i, methods: ['GET', 'OPTIONS']},
     /\/api\/v1\/auth/i,
 ]}));
