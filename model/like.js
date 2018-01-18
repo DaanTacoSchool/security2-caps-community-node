@@ -4,7 +4,9 @@ const User = require('./user');
 
 const LikeSchema = new Schema({
   user: User,
-  likes: Number
+  post: {
+    type: mongoose.Schema.Types.ObjectId, ref: 'post'
+}
 });
 
 const Like = mongoose.model('like', LikeSchema);
