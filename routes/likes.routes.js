@@ -5,6 +5,7 @@ const config = require('../config/config.json');
 const jwt = require('express-jwt');
 
 const Like = require('../model/like');
+const Post = require('../model/post');
 
 
 // Get likes of a user
@@ -44,18 +45,28 @@ router.get('/likes/:postId', (req, res) => {
 
 // Create a like
 router.post('/likes', (req, res) => {
-    let postId = req.body.postId;
+    // let post = req.body.post;
 
-    console.log(postId);
+    console.log(req.body.post);
 
     GetUserASPNETBackendv2(req.user.sub)
         .then((user) => {
             let l = new Like({
                 user: user,
-                postId: postId
+                post: req.body.post
             });
+            console.log(user);
             l.save().then((like) => {
-                res.status(200).json(like);
+                console.log(like);
+                Post.findOneAndUpdate({_id: req.body.post}, {$push: {likes: like}}, {new: true})
+                  .populate('comments')
+                  .populate('likes')
+                  .then((post) => {
+                    res.status(200).json(post);
+                  })
+                  .catch((error) => {
+                    res.status(400).json(error);
+                  });
             }).catch((error) => {
                 res.status(400).json(error);
             })
@@ -64,9 +75,21 @@ router.post('/likes', (req, res) => {
 
 // Delete (-un-like?) a like
 router.delete('/likes/:id', (req, res) => {
-    Like.remove({ _id : req.params.id,  'user.guid': req.user.sub }, (err) => {
-        if (err) return res.json(err);
-        res.status(200).json({message: 'Like removed'});
+    Like.remove({ _id : req.params.id,  'user.guid': req.user.sub })
+    .then((like) => {
+        // console.log(like);
+        Post.findOneAndUpdate({_id: like.post, likes: { "$in" : [req.params.id]} }, {$pull: {likes: req.params.id}})
+        .then((post) => {
+            console.log(post._id);
+            res.status(200).json({message: 'Like removed'});
+        })
+        .catch((err) => {
+            return res.json(err);
+        });
+        
+    })
+    .catch((err) => {
+        return res.json(err);
     });
 });
 
