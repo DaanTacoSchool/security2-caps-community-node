@@ -47,6 +47,7 @@ router.post('/comments/:postId', function (req, res) {
           .then((comment) => {
               Post.findByIdAndUpdate({_id: id}, {$push: {comments: comment}})
                   .populate('comments')
+                  .populate('likes')
                   .then((post) => {
                       res.status(200).json(comment);
                       console.log(JSON.stringify(post));
