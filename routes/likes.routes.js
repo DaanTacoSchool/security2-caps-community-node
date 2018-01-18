@@ -1,38 +1,43 @@
 const express = require('express');
 const router = express.Router();
 const {GetUserASPNETBackendv2} = require('../services/aspnet-api.service');
+const config = require('../config/config.json');
+const jwt = require('express-jwt');
 
 const Like = require('../model/like');
+
+
+// Get likes of a user
+router.get('/likes/u', jwt({
+    secret: config.secretKey,
+    credentialsRequired: true
+}), (req, res) => {
+    Like.find({ 'user.guid': req.user.sub})
+                .populate({
+                    path: 'post',
+                    populate: ['likes', 'comments']
+                })
+                .then((likes) => {
+                    console.log(likes);
+                    res.status(200).json(likes);
+                }).catch((error) => {
+                    res.status(400).json(error);
+                });
+});
 
 // Get likes of a post
 router.get('/likes/:postId', (req, res) => {
     let postId = req.params.postId;
 
-    Like.find({ postId: postId}).then((err, likes) => {
+    Like.find({ post: postId})
+    .populate('post').populate('post.comments').populate('post.likes')
+    .then((err, likes) => {
         if (err) return res.json(err);
 
         res.status(200).json(likes);
         console.log('fetched likes from post with id ' + postId);
     });
 });
-
-// Get likes of a user
-router.get('/likes/u', (req, res) => {
-    console.log(req.user.sub);
-    // GetUserASPNETBackendv2(req.user.sub)
-    //     .then((u) => {
-    //         console.log(u);
-    //         Like.find({ user: u})
-    //             .then((likes) => {
-    //                 console.log(likes);
-    //                 res.status(200).json(likes);
-    //             }).catch((error) => {
-    //                 res.status(400).json(error);
-    //             });
-    //     });
-    console.log('hello');
-});
-
 
 // Create a like
 router.post('/likes', (req, res) => {

@@ -11,6 +11,7 @@ router.get('/posts', function(req, res) {
     res.contentType('application/json');
     Post.find({})
         .populate('comments')
+        .populate('likes')
         .then((post) => {
             res.status(200).json(post);
         })
@@ -31,6 +32,7 @@ router.get('/posts/:id', jwt({
 
         Post.findOne({_id: id})
           .populate('comments')
+          .populate('likes')
           .then((post) => {
               if (req.user !== undefined && post.user.guid === req.user.sub) {
                   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -81,7 +83,8 @@ router.put('/posts/:id', function(req, res) {
         };
 
         Post.findByIdAndUpdate({_id: id, 'user.guid': req.user.sub}, {$set: update}, {new: true})
-            .populate('comment')
+            .populate('comments')
+            .populate('likes')
             .then((post) => {
                 res.status(200).json(post);
             })

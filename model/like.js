@@ -4,7 +4,7 @@ const User = require('./user');
 
 const LikeSchema = new Schema({
   user: User,
-  postId: {
+  post: {
     type: mongoose.Schema.Types.ObjectId, ref: 'post'
 }
 });
