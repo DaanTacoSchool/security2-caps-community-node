@@ -5,6 +5,9 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+const config = require('./config/config.json');
+const jwt = require('express-jwt');
+
 var db = require('./model/db');
 
 var index = require('./routes/index');
@@ -12,7 +15,8 @@ var users = require('./routes/users.routes');
 var comments = require('./routes/comments.routes');
 var posts = require('./routes/posts.routes');
 let images = require('./routes/images.routes');
-// var likes = require('./routes/likes');
+var likes = require('./routes/likes.routes');
+var auth = require('./routes/auth.routes');
 
 var app = express();
 
@@ -27,11 +31,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(jwt({ secret: config.secretKey}).unless({path: [
+    {url: /\/api\/v1\/users/i, methods: ['GET', 'OPTIONS']},
+    {url: /\/api\/v1\/comments/i, methods: ['GET', 'OPTIONS']},
+    {url: /\/api\/v1\/likes/i, methods: ['GET', 'OPTIONS']},
+    {url: /\/api\/v1\/posts/i, methods: ['GET', 'OPTIONS']},
+    /\/api\/v1\/auth/i,
+]}));
 
 app.use(function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', process.env.ORIGINURL || 'http://localhost:4200');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Origin, Content-Type, Accept, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', true);
   next();
 });
@@ -51,7 +62,8 @@ app.use('/api/v1', users);
 app.use('/api/v1', comments);
 app.use('/api/v1', posts);
 app.use('/api/v1', images);
-// app.use('./api/v1', likes)
+app.use('/api/v1', likes);
+app.use('/api/v1', auth);
 
 
 // catch 404 and forward to error handler
