@@ -5,6 +5,7 @@ const config = require('../config/config.json');
 const jwt = require('express-jwt');
 
 const Like = require('../model/like');
+const Post = require('../model/post');
 
 
 // Get likes of a user
@@ -44,30 +45,60 @@ router.get('/likes/:postId', (req, res) => {
 
 // Create a like
 router.post('/likes', (req, res) => {
-    let postId = req.body.postId;
+    let post = req.body.post;
 
-    console.log(postId);
+    Like.count({'user.guid': req.user.sub, post: post}, function(err, c){
+        if(err) {
+            res.status(400).json(error);
+        } else {
+            if(c === 0){
+                GetUserASPNETBackendv2(req.user.sub)
+                    .then((user) => {
+                        const like = new Like();
+                        like.user = user;
+                        like.post = post;
 
-    GetUserASPNETBackendv2(req.user.sub)
-        .then((user) => {
-            let l = new Like({
-                user: user,
-                postId: postId
-            });
-            l.save().then((like) => {
-                res.status(200).json(like);
-            }).catch((error) => {
-                res.status(400).json(error);
-            })
-        });
+                        Like.create(like)
+                            .then((like) => {
+                                Post.findByIdAndUpdate({_id: post}, {$push: {likes: like}})
+                                    .then((post) => {
+                                        res.status(200).json(like);
+                                    })
+                                    .catch((e) => {
+                                        res.status(400).json(e);
+                                    });
+                            })
+                            .catch((error) => {
+                                res.status(400).json(e);
+                            });
+                    })
+                    .catch((error) => {
+                        res.status(400).json(error);
+                    });
+            }
+        }
+
+
+    });
 });
 
 // Delete (-un-like?) a like
 router.delete('/likes/:id', (req, res) => {
-    Like.remove({ _id : req.params.id,  'user.guid': req.user.sub }, (err) => {
-        if (err) return res.json(err);
-        res.status(200).json({message: 'Like removed'});
-    });
+    Like.findOneAndRemove({ _id : req.params.id,  'user.guid': req.user.sub })
+        .then((like) => {
+            Post.findByIdAndUpdate({_id: like.post}, {$pull: {likes: like._id}}, {new: true})
+                .populate('comments')
+                .populate('likes')
+                .then((post) => {
+                    res.status(200).json({message: 'Like removed'});
+                })
+                .catch((error) => {
+                    res.status(400).json(error);
+                });
+        })
+        .catch((err) => {
+            res.status(400).json(err);
+        });
 });
 
 module.exports = router;

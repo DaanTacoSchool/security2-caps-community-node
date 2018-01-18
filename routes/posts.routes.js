@@ -47,6 +47,20 @@ router.get('/posts', function(req, res) {
         });
 });
 
+router.get('/posts/u', jwt({
+        secret: config.secretKey,
+        credentialsRequired: true
+    }), (req, res) => {
+        Post.find({ 'user.guid': req.user.sub})
+            .populate('comments')
+            .populate('likes')
+            .then((posts) => {
+                res.status(200).json(posts);
+            }).catch((error) => {
+                res.status(400).json(error);
+            });
+});
+
 // Get a post by ID
 router.get('/posts/:id', jwt({
         secret: config.secretKey,
@@ -134,7 +148,6 @@ router.delete('/posts/:id', function(req, res) {
         .catch((error) => {
             res.status(400).json({error: 'Could not delete post'})
         });
-
 });
 
 
