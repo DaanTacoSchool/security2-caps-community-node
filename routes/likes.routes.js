@@ -30,7 +30,10 @@ router.get('/likes/:postId', (req, res) => {
     let postId = req.params.postId;
 
     Like.find({ post: postId})
-    .populate('post').populate('post.comments').populate('post.likes')
+    .populate({
+        path: 'post',
+        populate: ['likes', 'comments']
+    })
     .then((err, likes) => {
         if (err) return res.json(err);
 
@@ -61,7 +64,7 @@ router.post('/likes', (req, res) => {
 
 // Delete (-un-like?) a like
 router.delete('/likes/:id', (req, res) => {
-    Like.remove({ _id : req.params.id }, (err) => {
+    Like.remove({ _id : req.params.id,  'user.guid': req.user.sub }, (err) => {
         if (err) return res.json(err);
         res.status(200).json({message: 'Like removed'});
     });
