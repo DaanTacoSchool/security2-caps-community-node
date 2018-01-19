@@ -14,7 +14,7 @@ var index = require('./routes/index');
 var users = require('./routes/users.routes');
 var comments = require('./routes/comments.routes');
 var posts = require('./routes/posts.routes');
-let images = require('./routes/images.routes');
+var images = require('./routes/images.routes');
 var likes = require('./routes/likes.routes');
 var auth = require('./routes/auth.routes');
 
@@ -35,8 +35,9 @@ app.use(jwt({ secret: config.secretKey}).unless({path: [
     {url: /\/api\/v1\/users/i, methods: ['GET', 'OPTIONS']},
     {url: /\/api\/v1\/comments/i, methods: ['GET', 'OPTIONS']},
     {url: /\/api\/v1\/likes/i, methods: ['GET', 'OPTIONS']},
+    {url: /\/api\/v1\/images/i, methods: ['GET', 'OPTIONS']},
     {url: /\/api\/v1\/posts/i, methods: ['GET', 'OPTIONS']},
-    /\/api\/v1\/auth/i,
+    /\/api\/v1\/auth/i
 ]}));
 
 app.use(function (req, res, next) {
@@ -51,7 +52,7 @@ app.options('*', function (req, res) {
   res.contentType('application/json');
   res.setHeader('Access-Control-Allow-Origin', process.env.ORIGINURL || 'http://localhost:4200');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Origin, Content-Type, Accept, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.status(200);
   res.send();

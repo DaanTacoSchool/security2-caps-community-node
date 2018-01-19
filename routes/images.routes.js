@@ -1,8 +1,3 @@
-var express = require('express');
-var router = express.Router();
-
-const mongodb = require('../model/db');
-
 //require express library
 var express = require('express');
 //require the express router
@@ -13,27 +8,20 @@ var multer = require('multer');
 var DIR = './public/images/';
 //define the type of upload multer would be doing and pass in its destination, in our case, its a single file with the name photo
 var upload = multer({dest: DIR}).single('photo');
-/* GET home page. */
-
-router.get('/', function(req, res, next) {
-// render the index page, and pass data to it.
-  res.render('index', { title: 'Express' });
-});
 
 //our file upload function.
-router.post('/images', function (req, res, next) {
-  var path = '';
-  upload(req, res, function (err) {
-    if (err) {
+router.post('/images', upload, function (req, res) {
+  if(req.file !== undefined && req.file.path !== undefined) {
+      var path = '';
+      // No error occured.
+      path = req.file.path;
+      path = path.substr(14);
+      res.json({"url": path});
+  } else {
       // An error occurred when uploading
-      console.log(err);
-      return res.status(422).send("an Error occured")
-    }
-    // No error occured.
-    path = req.file.path;
-    path = path.substr(14);
-    res.json({"url": path});
-  });
+      // console.log(err);
+      res.status(422).send("an Error occured")
+  }
 });
 
 module.exports = router;
