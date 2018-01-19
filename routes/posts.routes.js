@@ -120,9 +120,12 @@ router.put('/posts/:id', function(req, res) {
         const update = {
             title: postProps.title,
             description: postProps.description,
-            image_path: postProps.image_path,
             user: user
         };
+
+        if(postProps.image_path !== undefined) {
+            update.image_path = postProps.image_path;
+        }
 
         Post.findByIdAndUpdate({_id: id, 'user.guid': req.user.sub}, {$set: update}, {new: true})
             .populate('comments')
