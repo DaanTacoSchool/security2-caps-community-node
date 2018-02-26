@@ -43,6 +43,7 @@ router.get('/posts', function(req, res) {
             res.status(200).json(post);
         })
         .catch((error) => {
+            console.log(error);
             res.status(400).json(error)
         });
 });
@@ -57,6 +58,7 @@ router.get('/posts/u', jwt({
             .then((posts) => {
                 res.status(200).json(posts);
             }).catch((error) => {
+            console.log(error);
                 res.status(400).json(error);
             });
 });
@@ -83,6 +85,7 @@ router.get('/posts/:id', jwt({
               res.status(200).json(post);
           })
           .catch((error) => {
+            console.log(error);
               res.status(400).json(error)
           });
     }
@@ -106,6 +109,7 @@ router.post('/posts', function(req, res) {
             })
             .catch((error) => res.status(400).json(error));
     }).catch((error) => {
+        console.log(error);
         res.status(400).json({error: 'Could not load user'});
     });
 });
@@ -135,6 +139,7 @@ router.put('/posts/:id', function(req, res) {
             })
             .catch((error) => res.status(400).json(error));
     }).catch((error) => {
+        console.log(error);
         res.status(400).json({error: 'Could not load user'});
     });
 
@@ -149,6 +154,7 @@ router.delete('/posts/:id', function(req, res) {
             res.status(200).json(post);
         })
         .catch((error) => {
+            console.log(error);
             res.status(400).json({error: 'Could not delete post'})
         });
 });
