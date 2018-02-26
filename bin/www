@@ -5,8 +5,8 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('daanmongo:server');
-//var debug = require('debug')('capscommunitybackend:server');
+//var debug = require('debug')('daanmongo:server');
+var debug = require('debug')('communitybackend:server');
 var http = require('http');
 
 /**
