@@ -1,5 +1,6 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const {GetUserASPNETBackendv2} = require('../services/aspnet-api.service');
 
 const mongodb = require('../model/db');
 const Comment = require('../model/comment');
@@ -37,48 +38,62 @@ router.get('/comments/:postId', function (req, res) {
 
 // Create a comment
 router.post('/comments/:postId', function (req, res) {
-  const commentProps = req.body;
-  const id = req.param('id');
+    const commentProps = req.body;
+    const id = req.param('id');
 
-  Comment.create(commentProps)
-    .then((comment) => {
-      Post.findByIdAndUpdate({_id: id}, {$push: {comments: comment}})
-        .populate('comments')
-        .then((post) => {
-         res.status(200).json(comment);
-           console.log(JSON.stringify(post));
-        }, (e) => {
-          // catch 
-          console.log('Unable to get clients', e);
-        })
-    }).catch((error) => res.status(400).json(error));
-
+    GetUserASPNETBackendv2(req.user.sub).then((user) => {
+      commentProps.user = user;
+      Comment.create(commentProps)
+          .then((comment) => {
+              Post.findByIdAndUpdate({_id: id}, {$push: {comments: comment}})
+                  .populate('comments')
+                  .populate('likes')
+                  .then((post) => {
+                      res.status(200).json(comment);
+                      console.log(JSON.stringify(post));
+                  }, (e) => {
+                      // catch
+                      console.log('Unable to get clients', e);
+                  })
+          }).catch((error) => res.status(400).json(error));
+    })
+    .catch((error) => {
+        res.status(400).json({error: 'Could not load user'})
+    });
 });
 
 // Create a post
 router.post('/comments/p/:id', function (req, res) {
   const commentProps = req.body;
-  //const p = req.body.post;
-  console.log('------------------------------body--------------');
-  console.log(req.body);
-  //console.log(p);
+
+  GetUserASPNETBackendv2(req.user.sub)
+      .then((user)  => {
+         commentProps.user = user;
+
+         //const p = req.body.post;
+         console.log('------------------------------body--------------');
+         console.log(req.body);
+         //console.log(p);
 
 
-  console.log(commentProps);
-  const id = req.params.id;
-  let t = new Comment({ postId: commentProps.postId,
-    content: commentProps.content,
-    user: commentProps.user,})
-  t.save(commentProps)
-    .then((comment) => {
-      Post.findByIdAndUpdate({_id: id},{ $push:{ comments: comment}})   
-      .then((post) => {
-        console.log(post);
-       res.status(200).json(comment);
-       
-      }).catch((error) => console.log(error));
-    }).catch((error) => res.status(400).json(error));
+         console.log(commentProps);
+         const id = req.params.id;
+         let t = new Comment({ postId: commentProps.postId,
+             content: commentProps.content,
+             user: commentProps.user,});
+         t.save(commentProps)
+             .then((comment) => {
+                 Post.findByIdAndUpdate({_id: id},{ $push:{ comments: comment}})
+                     .then((post) => {
+                         console.log(post);
+                         res.status(200).json(comment);
 
+                     }).catch((error) => console.log(error));
+             }).catch((error) => res.status(400).json(error));
+
+  }).catch((error) => {
+      res.status(400).json(error);
+  });
 });
 
 
