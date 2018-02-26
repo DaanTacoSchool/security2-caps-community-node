@@ -4,7 +4,7 @@
 var mongoose = require( 'mongoose' );
 
 // Build the connection string
-var dbURI = process.env.DBURI || 'mongodb://localhost/communitybackend';
+var dbURI = process.env.DBURI || 'mongodb://localhost/daanmongo';
 
 // Create the database connection
 mongoose.connect(dbURI, {
