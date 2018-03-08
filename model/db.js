@@ -34,3 +34,4 @@ process.on('SIGINT', function() {
 require('./like');
 require('./comment');
 require('./post');
+//require('./user');

@@ -3,38 +3,43 @@ const router = express.Router();
 const config = require('../config/config.json');
 const jwt = require('express-jwt');
 const {GetUserASPNETBackendv2} = require('../services/aspnet-api.service');
-
+//const User = require('./model/user');
 const Post = require('../model/post');
+var validator = require('validator');
+var mongoose = require( 'mongoose' ), id = mongoose.Types.ObjectId;
+
 
 // Get all Posts
 router.get('/posts', function(req, res) {
-// <<<<<<< HEAD
-//   res.contentType('application/json');
-//   Post.find({})
-//     .then((Post) => {
-//       res.status(200).json(Post);
-//     })
-//     .catch((error) => res.status(400).json(error));
-// });
-//
-// // Get a post by ID
-// router.get('/posts/:id', function(req, res) {
-//   res.contentType('application/json');
-//   const id = req.param('id');
-//   Post.findOne({_id: id})
-//       .then((post) => {
-//           Comment.find({"_id":{ "$in": post.comments}})
-//             .then((comments)=> {
-//               post.comments= comments;
-//               res.status(200).json(post);
-//             }) // log comments -- give result ok only when in then
-//             .catch((error) => console.log(error));
-//         //  console.log(post);
-//       })
-//       .catch((error) => res.status(400).json(error));
-// });
-//
-// =======
+
+    // old git head
+    /*
+  res.contentType('application/json');
+  Post.find({})
+    .then((Post) => {
+      res.status(200).json(Post);
+    })
+    .catch((error) => res.status(400).json(error));
+});
+
+// Get a post by ID
+router.get('/posts/:id', function(req, res) {
+  res.contentType('application/json');
+  const id = req.param('id');
+  Post.findOne({_id: id})
+      .then((post) => {
+          Comment.find({"_id":{ "$in": post.comments}})
+            .then((comments)=> {
+              post.comments= comments;
+              res.status(200).json(post);
+            }) // log comments -- give result ok only when in then
+            .catch((error) => console.log(error));
+        //  console.log(post);
+      })
+      .catch((error) => res.status(400).json(error));
+});
+
+*/
     res.contentType('application/json');
     Post.find({})
         .populate('comments')
@@ -51,14 +56,29 @@ router.get('/posts/u', jwt({
         secret: config.secretKey,
         credentialsRequired: true
     }), (req, res) => {
-        Post.find({ 'user.guid': req.user.sub})
-            .populate('comments')
-            .populate('likes')
-            .then((posts) => {
-                res.status(200).json(posts);
-            }).catch((error) => {
+    /* check if given user uid is valid if not then throw and return error */
+    try {
+        if (validator.isUUID(req.user.sub)) {
+            console.log("valid uuid");
+            Post.find({ 'user.guid': req.user.sub})
+                .populate('comments')
+                .populate('likes')
+                .then((posts) => {
+                    res.status(200).json(posts);
+                }).catch((error) => {
+                console.log("the error"+ error);
                 res.status(400).json(error);
             });
+        }else{
+            var err = new Error('invalid user guid');
+            throw err
+        }
+    }catch(err){
+        console.log(err);
+        res.status(400).json(err);
+    }
+
+
 });
 
 // Get a post by ID
@@ -69,25 +89,38 @@ router.get('/posts/:id', jwt({
     function(req, res) {
         res.contentType('application/json');
 
-        const id = req.params.id;
+        const pid = req.params.id;
 
-        Post.findOne({_id: id})
-          .populate('comments')
-          .populate('likes')
-          .then((post) => {
-              if (req.user !== undefined && post.user.guid === req.user.sub) {
-                  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-              } else {
-                  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-              }
-              res.status(200).json(post);
-          })
-          .catch((error) => {
-              res.status(400).json(error)
-          });
+        /* validate if post id is a valid mongodb id */
+        try {
+            if (id.isValid(pid)) {
+
+                Post.findOne({_id: pid})
+                    .populate('comments')
+                    .populate('likes')
+                    .then((post) => {
+                        if (req.user !== undefined && post.user.guid === req.user.sub) {
+                            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+                        } else {
+                            res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+                        }
+                        res.status(200).json(post);
+                    })
+                    .catch((error) => {
+                        res.status(400).json(error)
+                    });
+
+            }else{
+                var err = new Error('invalid post guid');throw err
+            }
+        }catch(err){
+            console.log(err);
+            res.status(400).json(err);
+        }
+
+
     }
 );
-// >>>>>>> origin/develop
 
 // Create a post
 router.post('/posts', function(req, res) {
@@ -96,18 +129,28 @@ router.post('/posts', function(req, res) {
     delete postProps._id;
     delete postProps.likes;
     delete postProps.comments;
+    try {
+        if (validator.isUUID(req.user.sub)) {
 
-    GetUserASPNETBackendv2(req.user.sub).then((user) => {
-        postProps.user = user;
+            GetUserASPNETBackendv2(req.user.sub).then((user) => {
+                postProps.user = user;
+                Post.create(postProps)
+                    .then((post) => {
+                        res.status(200).json(post);
+                    })
+                    .catch((error) => res.status(400).json(error));
+            }).catch((error) => {
+                res.status(400).json({error: 'Could not load user'});
+            });
 
-        Post.create(postProps)
-            .then((post) => {
-                res.status(200).json(post);
-            })
-            .catch((error) => res.status(400).json(error));
-    }).catch((error) => {
-        res.status(400).json({error: 'Could not load user'});
-    });
+        }else{
+            var err = new Error('invalid user guid'); throw err
+        }
+    }catch(err){
+        console.log(err);
+        res.status(400).json(err);
+    }
+
 });
 
 
@@ -140,7 +183,7 @@ router.put('/posts/:id', function(req, res) {
 
 });
 
-// Update a Post by ID
+// delete a Post by ID
 router.delete('/posts/:id', function(req, res) {
     const id = req.params.id;
 
